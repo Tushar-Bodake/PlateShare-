@@ -126,6 +126,19 @@ export default function AuthModal({
       });
 
       const data = await res.json();
+      if (res.status === 404) {
+        const identifier = formData.email.trim();
+        const isEmail = identifier.includes('@');
+        setFormData((previous) => ({
+          ...previous,
+          email: isEmail ? identifier : '',
+          phone: isEmail ? previous.phone : identifier
+        }));
+        setMode('signup');
+        setError('No account found. Complete the form to create a new account.');
+        return;
+      }
+
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Login failed');
       }

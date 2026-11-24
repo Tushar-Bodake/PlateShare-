@@ -81,7 +81,11 @@ router.post('/login', async (req, res) => {
       [identifier, identifier]
     );
 
-    if (!user || user.password !== password) {
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'Account not found. Please sign up.' });
+    }
+
+    if (user.password !== password) {
       return res.status(401).json({ success: false, error: 'Invalid email/phone or password' });
     }
 
