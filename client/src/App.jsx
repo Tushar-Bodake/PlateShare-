@@ -7,11 +7,9 @@ import MyPostsView from './components/MyPostsView';
 import MyBookingsView from './components/MyBookingsView';
 import AdminDashboard from './components/AdminDashboard';
 import NotificationsDrawer from './components/NotificationsDrawer';
-import DemoUserSwitcher from './components/DemoUserSwitcher';
 import ReportModal from './components/ReportModal';
 import RatingModal from './components/RatingModal';
 import AuthModal from './components/AuthModal';
-import DonorBadge from './components/DonorBadge';
 
 import { 
   UtensilsCrossed, 
@@ -59,7 +57,6 @@ export default function App() {
   const [postModalOpen, setPostModalOpen] = useState(false);
   const [postInitialData, setPostInitialData] = useState(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [userSwitcherOpen, setUserSwitcherOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [reportingPost, setReportingPost] = useState(null);
   const [ratingData, setRatingData] = useState(null);
@@ -74,28 +71,6 @@ export default function App() {
       localStorage.setItem('plateshare_theme', 'light');
     }
   }, [isDarkMode]);
-
-  // Initial user initialization: load last used or default to Hope Community Kitchen (NGO)
-  useEffect(() => {
-    const savedUserId = localStorage.getItem('plateshare_user_id');
-    fetch('/api/auth/users')
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.users.length > 0) {
-          let userToSelect = data.users[0];
-          if (savedUserId) {
-            const found = data.users.find(u => u.id === parseInt(savedUserId, 10));
-            if (found) userToSelect = found;
-          } else {
-            // Default to NGO receiver (Hope Community Kitchen)
-            const ngo = data.users.find(u => u.name.includes('Hope'));
-            if (ngo) userToSelect = ngo;
-          }
-          setCurrentUser(userToSelect);
-        }
-      })
-      .catch(err => console.error('Error bootstrapping users:', err));
-  }, []);
 
   // Poll / fetch unread notifications count
   const fetchUnreadCount = useCallback(async () => {
@@ -194,10 +169,8 @@ export default function App() {
     }
   };
 
-  // Switch persona handler
-  const handleSelectUser = (user) => {
+  const handleAuthenticatedUser = (user) => {
     setCurrentUser(user);
-    localStorage.setItem('plateshare_user_id', user.id);
     if (user.role === 'admin') {
       setActiveView('admin');
     } else if (user.role === 'donor') {
@@ -243,37 +216,7 @@ export default function App() {
           setPostModalOpen(true);
         }}
         onOpenAuthModal={() => setAuthModalOpen(true)}
-        onOpenUserSwitcher={() => setUserSwitcherOpen(true)}
       />
-
-      {/* Role Switcher Floating Quick-Bar */}
-      <div className="bg-emerald-50/90 dark:bg-emerald-950/40 border-b border-emerald-200/80 dark:border-emerald-800/60 px-4 py-2">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-emerald-800 dark:text-emerald-300">
-              Active Session:
-            </span>
-            <span className="font-extrabold text-slate-900 dark:text-white">
-              {currentUser?.name}
-            </span>
-            <DonorBadge 
-              donorType={currentUser?.donor_type || (currentUser?.role === 'receiver' ? 'Other' : 'Other')} 
-              isVerified={currentUser?.verification_status === 'approved'} 
-              size="sm" 
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setUserSwitcherOpen(true)}
-              className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 hover:underline flex items-center gap-1"
-            >
-              <span>Switch persona / demo role</span>
-              <span>→</span>
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 flex-1 w-full">
@@ -462,19 +405,12 @@ export default function App() {
         }}
       />
 
-      <DemoUserSwitcher
-        isOpen={userSwitcherOpen}
-        onClose={() => setUserSwitcherOpen(false)}
-        currentUser={currentUser}
-        onSelectUser={handleSelectUser}
-        onOpenAuthModal={() => setAuthModalOpen(true)}
-      />
-
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
+        initialMode={currentUser ? 'login' : 'signup'}
         onLoginSuccess={(user) => {
-          handleSelectUser(user);
+          handleAuthenticatedUser(user);
         }}
       />
 

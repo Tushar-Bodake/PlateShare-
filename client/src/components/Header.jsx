@@ -9,7 +9,7 @@ import {
   ShieldCheck, 
   ShoppingBag, 
   SlidersHorizontal,
-  ChevronDown 
+  LogIn
 } from 'lucide-react';
 import DonorBadge from './DonorBadge';
 
@@ -22,8 +22,7 @@ export default function Header({
   unreadCount,
   onOpenNotifications,
   onOpenPostModal,
-  onOpenAuthModal,
-  onOpenUserSwitcher
+  onOpenAuthModal
 }) {
   return (
     <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
@@ -110,18 +109,16 @@ export default function Header({
             <span>Donate Food</span>
           </button>
 
-          {/* Quick Demo Role Switcher Button */}
+          {/* Account login / switching */}
           <button
-            onClick={onOpenUserSwitcher}
+            onClick={onOpenAuthModal}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 transition-all"
-            title="Switch demo persona or test accounts"
+            title={currentUser ? 'Sign in to another account' : 'Log in or create an account'}
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="hidden sm:inline">Role:</span>
+            <LogIn className="w-4 h-4" />
             <span className="font-extrabold text-brand-600 dark:text-brand-400 truncate max-w-[100px] sm:max-w-none">
-              {currentUser ? currentUser.name.split(' ')[0] : 'Guest'}
+              {currentUser ? 'Switch account' : 'Log in / Sign up'}
             </span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
 
           {/* Notifications Bell */}

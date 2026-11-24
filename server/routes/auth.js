@@ -2,20 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { getDb } = require('../db');
 
-// List all users for demo role switching
-router.get('/users', async (req, res) => {
-  try {
-    const db = await getDb();
-    const users = db.all(
-      `SELECT id, name, email, phone, role, donor_type, is_org, verification_status, phone_verified, rating_avg, rating_count, address, created_at 
-       FROM users ORDER BY id ASC`
-    );
-    res.json({ success: true, users });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
 // Register new user
 router.post('/register', async (req, res) => {
   try {

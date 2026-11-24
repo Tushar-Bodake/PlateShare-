@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, UserPlus, LogIn, Phone, Mail, ShieldAlert, CheckCircle2 } from 'lucide-react';
 
 const DONOR_TYPES = [
@@ -14,9 +14,10 @@ const DONOR_TYPES = [
 export default function AuthModal({
   isOpen,
   onClose,
+  initialMode = 'signup',
   onLoginSuccess
 }) {
-  const [mode, setMode] = useState('signup'); // 'signup' | 'login' | 'otp'
+  const [mode, setMode] = useState(initialMode); // 'signup' | 'login' | 'otp'
   const [role, setRole] = useState('donor'); // 'donor' | 'receiver'
   const [isNgo, setIsNgo] = useState(false);
   const [donorType, setDonorType] = useState('Restaurant / Cafe');
@@ -33,6 +34,13 @@ export default function AuthModal({
   const [createdUser, setCreatedUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setMode(initialMode);
+      setError(null);
+    }
+  }, [isOpen, initialMode]);
 
   if (!isOpen) return null;
 
