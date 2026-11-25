@@ -113,6 +113,10 @@ export default function AuthModal({
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    await loginWithCredentials(formData.email, formData.password);
+  };
+
+  const loginWithCredentials = async (identifier, password) => {
     setLoading(true);
     setError(null);
     try {
@@ -120,19 +124,19 @@ export default function AuthModal({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          identifier: formData.email,
-          password: formData.password
+          identifier,
+          password
         })
       });
 
       const data = await res.json();
       if (res.status === 404) {
-        const identifier = formData.email.trim();
-        const isEmail = identifier.includes('@');
+        const trimmedIdentifier = identifier.trim();
+        const isEmail = trimmedIdentifier.includes('@');
         setFormData((previous) => ({
           ...previous,
-          email: isEmail ? identifier : '',
-          phone: isEmail ? previous.phone : identifier
+          email: isEmail ? trimmedIdentifier : '',
+          phone: isEmail ? previous.phone : trimmedIdentifier
         }));
         setMode('signup');
         setError('No account found. Complete the form to create a new account.');
@@ -342,6 +346,16 @@ export default function AuthModal({
         {/* Login Mode */}
         {mode === 'login' && (
           <form onSubmit={handleLogin} className="mt-4 space-y-3.5">
+            <button
+              type="button"
+              onClick={() => loginWithCredentials('admin@plateshare.com', 'password123')}
+              disabled={loading}
+              className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-950 dark:bg-slate-700 dark:hover:bg-slate-600 text-white text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2"
+            >
+              <ShieldAlert className="w-4 h-4" />
+              {loading ? 'Logging in...' : 'Log In as Admin'}
+            </button>
+
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                 Email or Phone *

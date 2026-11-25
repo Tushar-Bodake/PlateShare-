@@ -58,6 +58,7 @@ export default function App() {
   const [postInitialData, setPostInitialData] = useState(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalInitialMode, setAuthModalInitialMode] = useState('signup');
   const [reportingPost, setReportingPost] = useState(null);
   const [ratingData, setRatingData] = useState(null);
 
@@ -215,7 +216,14 @@ export default function App() {
           setPostInitialData(null);
           setPostModalOpen(true);
         }}
-        onOpenAuthModal={() => setAuthModalOpen(true)}
+        onOpenAuthModal={() => {
+          setAuthModalInitialMode(currentUser ? 'login' : 'signup');
+          setAuthModalOpen(true);
+        }}
+        onOpenAdminLogin={() => {
+          setAuthModalInitialMode('login');
+          setAuthModalOpen(true);
+        }}
       />
 
       {/* Main Content Area */}
@@ -408,7 +416,7 @@ export default function App() {
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
-        initialMode={currentUser ? 'login' : 'signup'}
+        initialMode={authModalInitialMode}
         onLoginSuccess={(user) => {
           handleAuthenticatedUser(user);
         }}

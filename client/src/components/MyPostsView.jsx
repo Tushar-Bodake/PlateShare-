@@ -13,7 +13,8 @@ import {
   Building2, 
   AlertTriangle, 
   Star,
-  ExternalLink 
+  ExternalLink,
+  Utensils
 } from 'lucide-react';
 
 export default function MyPostsView({

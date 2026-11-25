@@ -22,7 +22,8 @@ export default function Header({
   unreadCount,
   onOpenNotifications,
   onOpenPostModal,
-  onOpenAuthModal
+  onOpenAuthModal,
+  onOpenAdminLogin
 }) {
   return (
     <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
@@ -113,13 +114,24 @@ export default function Header({
           <button
             onClick={onOpenAuthModal}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 transition-all"
-            title={currentUser ? 'Sign in to another account' : 'Log in or create an account'}
+            title={currentUser ? `Signed in as ${currentUser.name}. Click to switch account` : 'Log in or create an account'}
           >
             <LogIn className="w-4 h-4" />
             <span className="font-extrabold text-brand-600 dark:text-brand-400 truncate max-w-[100px] sm:max-w-none">
-              {currentUser ? 'Switch account' : 'Log in / Sign up'}
+              {currentUser ? currentUser.name : 'Log in / Sign up'}
             </span>
           </button>
+
+          {!currentUser && (
+            <button
+              onClick={onOpenAdminLogin}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-xs font-bold text-white transition-all"
+              title="Open admin login"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Admin Login</span>
+            </button>
+          )}
 
           {/* Notifications Bell */}
           <button
